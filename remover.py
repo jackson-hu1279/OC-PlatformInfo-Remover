@@ -7,7 +7,6 @@ with open(file_name, "rb") as fp:
 
 # Retrieve original PlatformInfo values
 platforminfo_dict = plist_data["PlatformInfo"]["Generic"]
-print(platforminfo_dict)
 
 # Define key names of sensitive info
 keys_to_remove = [
@@ -16,3 +15,11 @@ keys_to_remove = [
     "SystemSerialNumber",
     "SystemUUID"
 ]
+
+# Remove sensitive PlatformInfo values
+# Original values will be replaced as "**REQUIRED**"
+for key in keys_to_remove:
+    if key in platforminfo_dict.keys():
+        platforminfo_dict[key] = "**REQUIRED**"
+
+plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
