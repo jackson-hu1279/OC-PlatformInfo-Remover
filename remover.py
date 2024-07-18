@@ -23,3 +23,8 @@ for key in keys_to_remove:
         platforminfo_dict[key] = "**REQUIRED**"
 
 plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
+
+# Save the modified plist as a new file
+file_new_name = "config_modified.plist"
+with open(file_new_name, "wb") as fp:
+    plistlib.dump(plist_data, fp)
