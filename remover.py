@@ -20,6 +20,8 @@ keys_to_remove = [
 # Original values will be replaced as "**REQUIRED**"
 for key in keys_to_remove:
     if key in platforminfo_dict.keys():
+        print(f"Found match key: {key}")
+        print(f"Value to remove: {platforminfo_dict[key]}\n")
         platforminfo_dict[key] = "**REQUIRED**"
 
 plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
