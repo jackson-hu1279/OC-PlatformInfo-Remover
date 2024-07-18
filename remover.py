@@ -3,8 +3,16 @@ import plistlib
 
 # Read the given plist file
 file_name = sys.argv[1] if len(sys.argv) > 1 else "config.plist"
-with open(file_name, "rb") as fp:
-    plist_data = plistlib.load(fp)
+
+try:
+    with open(file_name, "rb") as fp:
+        plist_data = plistlib.load(fp)
+except FileNotFoundError:
+    print(f"Error: Cannot find the file '{file_name}'")
+    exit(-1)
+except Exception as e:
+    print(f"An error occurred when loading the file '{file_name}'")
+    exit(-1)
 
 # Retrieve original PlatformInfo values
 platforminfo_dict = plist_data["PlatformInfo"]["Generic"]
