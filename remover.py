@@ -12,6 +12,8 @@ KEYS_TO_REMOVE = [
     "SystemUUID"
 ]
 
+DEBUG = True
+
 def main():
     # Read the given plist file
     file_name = sys.argv[1] if len(sys.argv) > 1 else "config.plist"
@@ -23,6 +25,7 @@ def main():
         exit(-1)
     except Exception as e:
         print(f"An error occurred when loading the file '{file_name}'")
+        if DEBUG: print(f"Error message: {e}")
         exit(-1)
 
     # Retrieve original PlatformInfo values
@@ -32,8 +35,9 @@ def main():
     # Original values will be replaced with default value
     for key in KEYS_TO_REMOVE:
         if key in platforminfo_dict.keys():
-            print(f"Found match key: {key}")
-            print(f"Value to remove: {platforminfo_dict[key]}\n")
+            if DEBUG:
+                print(f"Found match key: {key}")
+                print(f"Value to remove: {platforminfo_dict[key]}\n")
             platforminfo_dict[key] = DEFAULT_VALUE
 
     plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
