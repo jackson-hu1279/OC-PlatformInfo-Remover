@@ -41,9 +41,6 @@ def remove_platform_values(plist_data):
     # Original values will be replaced with default value
     for key in KEYS_TO_REMOVE:
         if key in platforminfo_dict.keys():
-            if DEBUG:
-                print(f"Found match key: {key}")
-                print(f"Value to remove: {platforminfo_dict[key]}\n")
             platforminfo_dict[key] = DEFAULT_VALUE
 
     plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
@@ -57,6 +54,8 @@ def save_new_plist_file(original_file_name, plist_data):
     file_new_name = original_file_name.split(".")[0] + "_modified.plist"
     with open(file_new_name, "wb") as fp:
         plistlib.dump(plist_data, fp)
+        if DEBUG:
+            print(f"Modified file saved as '{file_new_name}'")
 
 
 # List all files in a directory
@@ -86,6 +85,10 @@ def list_files(directory):
 
 # Process a single plist file
 def process_plist_file(file_name):
+    if DEBUG:
+        print("=== Processing ===")
+        print(f"Processing file: {file_name}")
+
     # Load the given plist file
     plist_data = load_plist_file(file_name)
 
@@ -105,12 +108,15 @@ def main(args):
     DEBUG = args.verbose
 
     if DEBUG:
-        print(f"File name: '{args.file}'")
-        print(f"Directory path: '{args.dir}'")
-        print(f"Verbose mode: '{args.verbose}'")
+        print("====== Args ======")
+        print(f"Args - File name: '{args.file}'")
+        print(f"Args - Directory path: '{args.dir}'")
+        print(f"Args - Verbose mode: '{args.verbose}'")
 
     # Enter batch processing mode if given dir path
     if dir_path:
+        if DEBUG:
+            print("=== Batch Mode ===")
         file_name_lst = list_files(dir_path)
         for file_name in file_name_lst:
             process_plist_file(dir_path + "/" + file_name)
