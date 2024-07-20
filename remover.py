@@ -14,14 +14,8 @@ KEYS_TO_REMOVE = ["SystemProductName", "MLB", "SystemSerialNumber", "SystemUUID"
 DEBUG = False
 
 
-def main(args):
-    # Check parsed args
-    print(f"File name: '{args.file}'")
-    print(f"Directory path: '{args.dir}'")
-    print(f"Verbose mode: '{args.verbose}'")
-
-    # Read the given plist file
-    file_name = args.file if args.file else PLIST_FILE_NAME
+# Load the given plist file
+def load_plist_file(file_name):
     try:
         with open(file_name, "rb") as fp:
             plist_data = plistlib.load(fp)
@@ -34,6 +28,11 @@ def main(args):
             print(f"Error message: {e}")
         exit(-1)
 
+    return plist_data
+
+
+# Remove sensitive PlatformInfo values
+def remove_platform_values(plist_data):
     # Retrieve original PlatformInfo values
     platforminfo_dict = plist_data["PlatformInfo"]["Generic"]
 
@@ -47,11 +46,37 @@ def main(args):
             platforminfo_dict[key] = DEFAULT_VALUE
 
     plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
+    plist_data_updated = plist_data
 
-    # Save the modified plist as a new file
-    file_new_name = file_name.split(".")[0] + "_modified.plist"
+    return plist_data_updated
+
+
+# Save plist data as a new file
+def save_new_plist_file(original_file_name, plist_data):
+    file_new_name = original_file_name.split(".")[0] + "_modified.plist"
     with open(file_new_name, "wb") as fp:
         plistlib.dump(plist_data, fp)
+
+
+def main(args):
+    # Check parsed args
+    file_name = args.file if args.file else PLIST_FILE_NAME
+    dir_path = args.dir
+    DEBUG = args.verbose
+
+    if DEBUG:
+        print(f"File name: '{args.file}'")
+        print(f"Directory path: '{args.dir}'")
+        print(f"Verbose mode: '{args.verbose}'")
+
+    # Load the given plist file
+    plist_data = load_plist_file(file_name)
+
+    # Remove sensitive PlatformInfo values
+    plist_data_updated = remove_platform_values(plist_data)
+
+    # Save the modified plist as a new file
+    save_new_plist_file(original_file_name=file_name, plist_data=plist_data_updated)
 
 
 if __name__ == "__main__":
