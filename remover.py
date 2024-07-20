@@ -48,10 +48,14 @@ def remove_platform_values(plist_data):
 # Save plist data as a new file
 def save_new_plist_file(original_file_name, plist_data):
     file_new_name = original_file_name.split(".")[0] + "_modified.plist"
-    with open(file_new_name, "wb") as fp:
-        plistlib.dump(plist_data, fp)
-        if DEBUG:
-            print(f"Modified file saved as '{file_new_name}'")
+
+    try:
+        with open(file_new_name, "wb") as fp:
+            plistlib.dump(plist_data, fp)
+            if DEBUG:
+                print(f"Modified file saved as '{file_new_name}'")
+    except Exception as e:
+        handle_error(f"An error occurred when saving the file '{file_new_name}'", e)
 
 
 # List all files in a directory
