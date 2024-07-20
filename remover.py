@@ -15,47 +15,12 @@ KEYS_TO_REMOVE = ["SystemProductName", "MLB", "SystemSerialNumber", "SystemUUID"
 DEBUG = False
 
 
-# Load the given plist file
-def load_plist_file(file_name):
-    try:
-        with open(file_name, "rb") as fp:
-            plist_data = plistlib.load(fp)
-    except FileNotFoundError:
-        handle_error(f"Error: Cannot find the file '{file_name}'")
-    except Exception as e:
-        handle_error(f"An error occurred when loading the file '{file_name}'", e)
-
-    return plist_data
-
-
-# Remove sensitive PlatformInfo values
-def remove_platform_values(plist_data):
-    # Retrieve original PlatformInfo values
-    platforminfo_dict = plist_data["PlatformInfo"]["Generic"]
-
-    # Remove sensitive PlatformInfo values
-    # Original values will be replaced with default value
-    for key in KEYS_TO_REMOVE:
-        if key in platforminfo_dict.keys():
-            platforminfo_dict[key] = DEFAULT_VALUE
-
-    plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
-    plist_data_updated = plist_data
-
-    return plist_data_updated
-
-
-# Save plist data as a new file
-def save_new_plist_file(original_file_name, plist_data):
-    file_new_name = original_file_name.split(".")[0] + "_modified.plist"
-
-    try:
-        with open(file_new_name, "wb") as fp:
-            plistlib.dump(plist_data, fp)
-            if DEBUG:
-                print(f"Modified file saved as '{file_new_name}'")
-    except Exception as e:
-        handle_error(f"An error occurred when saving the file '{file_new_name}'", e)
+# Helper function to handle errors
+def handle_error(error_print, error_details=None):
+    print(error_print)
+    if DEBUG and error_details:
+        print(f"Error message: {error_details}")
+    exit(-1)
 
 
 # List all files in a directory
@@ -81,6 +46,49 @@ def list_files(directory):
         handle_error(f"An error occurred when listing files in '{directory}'", e)
 
 
+# Load the given plist file
+def load_plist_file(file_name):
+    try:
+        with open(file_name, "rb") as fp:
+            plist_data = plistlib.load(fp)
+    except FileNotFoundError:
+        handle_error(f"Error: Cannot find the file '{file_name}'")
+    except Exception as e:
+        handle_error(f"An error occurred when loading the file '{file_name}'", e)
+
+    return plist_data
+
+
+# Save plist data as a new file
+def save_new_plist_file(original_file_name, plist_data):
+    file_new_name = original_file_name.split(".")[0] + "_modified.plist"
+
+    try:
+        with open(file_new_name, "wb") as fp:
+            plistlib.dump(plist_data, fp)
+            if DEBUG:
+                print(f"Modified file saved as '{file_new_name}'")
+    except Exception as e:
+        handle_error(f"An error occurred when saving the file '{file_new_name}'", e)
+
+
+# Remove sensitive PlatformInfo values
+def remove_platform_values(plist_data):
+    # Retrieve original PlatformInfo values
+    platforminfo_dict = plist_data["PlatformInfo"]["Generic"]
+
+    # Remove sensitive PlatformInfo values
+    # Original values will be replaced with default value
+    for key in KEYS_TO_REMOVE:
+        if key in platforminfo_dict.keys():
+            platforminfo_dict[key] = DEFAULT_VALUE
+
+    plist_data["PlatformInfo"]["Generic"] = platforminfo_dict
+    plist_data_updated = plist_data
+
+    return plist_data_updated
+
+
 # Process a single plist file
 def process_plist_file(file_name):
     if DEBUG:
@@ -96,13 +104,8 @@ def process_plist_file(file_name):
     # Save the modified plist as a new file
     save_new_plist_file(original_file_name=file_name, plist_data=plist_data_updated)
 
-## Helper function to handle errors
-def handle_error(error_print, error_details=None):
-    print(error_print)
-    if DEBUG and error_details:
-        print(f"Error message: {error_details}")
-    exit(-1)
 
+# Execution of main logic
 def main(args):
     global DEBUG
 
