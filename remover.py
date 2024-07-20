@@ -134,8 +134,8 @@ def main(args):
 
 
 if __name__ == "__main__":
-    # Create the parser
-    arg_parser = argparse.ArgumentParser(description="A flag with a value")
+    # Define the argument parser
+    arg_parser = argparse.ArgumentParser(description="A script to remove sensitive PlatformInfo values in OC config files")
     arg_parser.add_argument(
         "-f",
         "--file",
@@ -153,8 +153,7 @@ if __name__ == "__main__":
     arg_parser.add_argument(
         "-v",
         "--verbose",
-        type=bool,
-        default=False,
+        action="store_true",
         help="Verbose mode with debug logs",
     )
     args = arg_parser.parse_args()
