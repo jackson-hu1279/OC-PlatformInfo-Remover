@@ -21,13 +21,9 @@ def load_plist_file(file_name):
         with open(file_name, "rb") as fp:
             plist_data = plistlib.load(fp)
     except FileNotFoundError:
-        print(f"Error: Cannot find the file '{file_name}'")
-        exit(-1)
+        handle_error(f"Error: Cannot find the file '{file_name}'")
     except Exception as e:
-        print(f"An error occurred when loading the file '{file_name}'")
-        if DEBUG:
-            print(f"Error message: {e}")
-        exit(-1)
+        handle_error(f"An error occurred when loading the file '{file_name}'", e)
 
     return plist_data
 
@@ -74,13 +70,11 @@ def list_files(directory):
 
         return files
     except FileNotFoundError:
-        print(f"Error: Directory '{directory}' does not exist")
+        handle_error(f"Error: Directory '{directory}' does not exist")
     except PermissionError:
-        print(f"Error: Permission denied to access the directory '{directory}'")
+        handle_error(f"Error: Permission denied to access the directory '{directory}'")
     except Exception as e:
-        print(f"An error occurred when listing files in '{directory}'")
-        if DEBUG:
-            print(f"Error message: {e}")
+        handle_error(f"An error occurred when listing files in '{directory}'", e)
 
 
 # Process a single plist file
@@ -98,6 +92,12 @@ def process_plist_file(file_name):
     # Save the modified plist as a new file
     save_new_plist_file(original_file_name=file_name, plist_data=plist_data_updated)
 
+## Helper function to handle errors
+def handle_error(error_print, error_details=None):
+    print(error_print)
+    if DEBUG and error_details:
+        print(f"Error message: {error_details}")
+    exit(-1)
 
 def main(args):
     global DEBUG
